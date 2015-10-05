@@ -1,5 +1,5 @@
 # Codility Lesson 1: FrogJmp
-# Time complexity: O(1)
+# Time Complexity: O(1)
 
 def solution(x, y, d)
     float_sol = (y - x).to_f / d.to_f

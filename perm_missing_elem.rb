@@ -1,5 +1,5 @@
 # Codility Lesson 1: PermMissingElem
-# Time complexity: O(n)
+# Time Complexity: O(n)
 
 def solution(a)
     sum_arr = a.inject(0) { |el, sum| sum += el }
