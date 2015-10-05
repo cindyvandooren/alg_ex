@@ -1,4 +1,4 @@
-# Codibility Lesson 1: TapeEquilibrium
+# Codility Lesson 1: TapeEquilibrium
 # Time Complexity: O(n2)
 
 def solution(a)
