@@ -94,7 +94,7 @@ end
 
 #Helper to run script on command line.
 if $PROGRAM_NAME == __FILE__
-	file = ARGV.empty? ? "numbers.txt" : ARGV[0]
+	file = ARGV.empty? ? "numbers1.txt" : ARGV[0]
   load_file(file)
   p sort_and_count($arr)[0]
 end
