@@ -1,3 +1,5 @@
+require "byebug"
+require "io/console"
 # Link to course: https://class.coursera.org/algo-009/quiz/attempt?quiz_id=33
 
 # Question 1
@@ -35,19 +37,34 @@
 # choice, just type the numeric answer in the following space.)
 
 # Basic quicksort
-# Sorting is not done in place
+# Sorting is not done in place: This is not a memory efficient solution.
 
-def quicksort(array)
-	
+def qs(arr)
+	return arr if arr.length <= 1 
+
+	pivot = arr.first
+	first = []
+	last = []
+
+	arr.drop(1).each do |el|
+		if el <= pivot 
+			first << el
+		else
+			last << el
+		end
+	end
+
+	return qs(first) + [pivot] + qs(last)
 end
 
 
 
-def load_file(file)
-	$arr = File.readlines(file).map(&:to_i)
-end
 
-if $PROGRAM_NAME == __FILE__
-	file = ARGV.empty? ? "numbers2.txt" : ARGV[0]
-  load_file(file)
-end
+# def load_file(file)
+# 	$arr = File.readlines(file).map(&:to_i)
+# end
+
+# if $PROGRAM_NAME == __FILE__
+# 	file = ARGV.empty? ? "numbers2.txt" : ARGV[0]
+#   load_file(file)
+# end
