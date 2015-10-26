@@ -1,5 +1,6 @@
 require "byebug"
 require "io/console"
+
 # Link to course: https://class.coursera.org/algo-009/quiz/attempt?quiz_id=33
 
 # Question 1
@@ -40,23 +41,23 @@ require "io/console"
 # Sorting is not done in place: This is not a memory efficient solution.
 # No random pivot.
 # No duplicate entries.
-def qs(arr)
-	return arr if arr.length <= 1 
+# def qs(arr)
+# 	return arr if arr.length <= 1 
 
-	pivot = arr.first
-	first = []
-	last = []
+# 	pivot = arr.first
+# 	first = []
+# 	last = []
 
-	arr.drop(1).each do |el|
-		if el <= pivot 
-			first << el
-		else
-			last << el
-		end
-	end
+# 	arr.drop(1).each do |el|
+# 		if el <= pivot 
+# 			first << el
+# 		else
+# 			last << el
+# 		end
+# 	end
 
-	return qs(first) + [pivot] + qs(last)
-end
+# 	return qs(first) + [pivot] + qs(last)
+# end
 
 # Sorting is done in place.
 # No random pivot chosen.
@@ -83,39 +84,79 @@ end
 # 	return qsort(arr[0...split_i - 1]) + [pivot] + qsort(arr[split_i..-1])
 # end
 
-def qsort(to_sort, index_of_pivot = 0, right_index = to_sort.length - 1)
-        old_right_index = right_index   
-        left_index = index_of_pivot 
-         
-        # stop the recursion if nothing to sort
-        return to_sort if left_index >= right_index
-         
-        # partition operation
-        # move both indexes towards the center until they cross over
-        # when left index finds an element greater than pivot and 
-        # right index finds an element smaller than pivot swap them 
-        while left_index < right_index           
-            while to_sort[left_index] <= to_sort[index_of_pivot] and left_index < to_sort.length - 1
-                left_index = left_index + 1
-            end
-             
-            right_index = right_index - 1 until to_sort[right_index] <= to_sort[index_of_pivot] 
-             
-            # swap both elements
-            if left_index < right_index
-                to_sort[left_index], to_sort[right_index] = to_sort[right_index], to_sort[left_index]
-            end
-        end
-         
-        # swap pivot
-        to_sort[index_of_pivot], to_sort[right_index] = to_sort[right_index], to_sort[index_of_pivot]   
-         
-        # recursively sort the sub arrays 
-        sort(to_sort, index_of_pivot, right_index - 1)  
-        sort(to_sort, left_index, old_right_index)
-         
-        return to_sort
-    end
+# def qsort(to_sort, index_of_pivot = 0, right_index = to_sort.length - 1)
+#   old_right_index = right_index   
+#   left_index = index_of_pivot 
+   
+#   # stop the recursion if nothing to sort
+#   return to_sort if left_index >= right_index
+   
+#   # partition operation
+#   # move both indexes towards the center until they cross over
+#   # when left index finds an element greater than pivot and 
+#   # right index finds an element smaller than pivot swap them 
+#   while left_index < right_index           
+#       while to_sort[left_index] <= to_sort[index_of_pivot] and left_index < to_sort.length - 1
+#           left_index = left_index + 1
+#       end
+       
+#       right_index = right_index - 1 until to_sort[right_index] <= to_sort[index_of_pivot] 
+       
+#       # swap both elements
+#       if left_index < right_index
+#           to_sort[left_index], to_sort[right_index] = to_sort[right_index], to_sort[left_index]
+#       end
+#   end
+   
+#   # swap pivot
+#   to_sort[index_of_pivot], to_sort[right_index] = to_sort[right_index], to_sort[index_of_pivot]   
+   
+#   # recursively sort the sub arrays 
+#   sort(to_sort, index_of_pivot, right_index - 1)  
+#   sort(to_sort, left_index, old_right_index)
+   
+#   return to_sort
+# end
+
+# Sorting is done in place
+# Choose random pivot
+def quicksort(to_sort, left_bound = 0, right_bound = to_sort.length - 1)
+	return to_sort if right_bound - left_bound < 1
+	# Choose a random pivot between left_bound and right_bound and set pivot
+	pivot_idx = choose_pivot_idx(left_bound, right_bound)
+	pivot = to_sort[pivot_idx]
+
+	# Swap pivot with lower bound of array (first element of subarray to sort)
+	to_sort[left_bound], to_sort[pivot_idx] = to_sort[pivot_idx], to_sort[left_bound]
+
+	# i is the index of the split between < pivot and > pivot
+	i = left_bound + 1
+
+	(left_bound + 1).upto(right_bound) do |idx|
+		if to_sort[idx] < pivot
+			# Swap the last element that is < pivot with to_sort[idx]
+			to_sort[i], to_sort[idx] = to_sort[idx], to_sort[i]
+			i += 1
+		end
+	end
+
+	# Put the pivot in its correct place by swapping
+	to_sort[left_bound], to_sort[i - 1] = to_sort[i - 1], to_sort[left_bound]
+
+	quicksort(to_sort, i, right_bound)
+	quicksort(to_sort, left_bound, i - 2)
+
+	return to_sort
+end
+
+def choose_pivot_idx(left_bound, right_bound)
+	rand(left_bound..right_bound)
+end
+
+# print quicksort([5, 4, 3, 2, 1, 8, 7, 6])
+# print quicksort([5, 4, 3, 2, 1])
+# print quicksort([6, 7, 8, 1, 2, 3, 4])
+# print quicksort([6, 7, 8, 1, 2, 3, 4, 4, 4, 4, 4])
 
 
 # def load_file(file)
