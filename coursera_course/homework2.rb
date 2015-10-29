@@ -96,7 +96,7 @@ def qsort(to_sort, index_of_pivot = 0, right_index = to_sort.length - 1)
   # when left index finds an element greater than pivot and 
   # right index finds an element smaller than pivot swap them 
   while left_index < right_index           
-      while to_sort[left_index] <= to_sort[index_of_pivot] and left_index < to_sort.length - 1
+      while to_sort[left_index] <= to_sort[index_of_pivot] && left_index < to_sort.length - 1
           left_index = left_index + 1
       end
        
