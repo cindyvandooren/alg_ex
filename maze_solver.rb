@@ -241,8 +241,5 @@ if __FILE__ == $PROGRAM_NAME
 	end
 end
 
-# c = MazeSolver.new("harder_maze.txt")
-# c.display_maze
-# c.find_way_out
 
 
