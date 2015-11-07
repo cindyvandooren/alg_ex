@@ -22,36 +22,75 @@ require 'io/console'
 # you ever find.) Write your numeric answer in the space provided. So e.g., if your answer 
 # is 5, just type 5 in the space provided.
 
-# Will run the one_cut method a number of times and keep track of the minimum cut so far.
+# Will run the karget_cut method a number of times and keep track of 
+# the minimum cut so far.
 def minimum_cut
+	n = $graph.length
+	num_repeats = ((n * Math.log(n)) ** 2).to_i
+	size = []
+
+	num_repeats.times do 
+		size << karger_cut
+	end
+
+	return size.min
 end
 
-# Computes one possible minimum cut. 
-def one_cut
-	# Want to start over with a clean adjacency list every time the minimum_cut method calls 
-	# this method.
-	file = ARGV.empty? ? "numbers3.txt" : ARGV[0]
-	list = file_to_list(file)
 
-	while list.length > 2
-		# Pick a random edge: first pick a random array from the list. 
-		arr = rand(list.length)
-		# Then see which vertex this arr represents and find start vertex u.
-		u = list[arr][0]
-		# Then randomly find end vertex of the edge (random element of array, but not 0th element).
-		end_pos = 1 + rand(arr.length - 1)
-		v = arr[end_pos]
+def karger_cut
+	# Want to start over with a copy of the original graph every time method is called.	
+	graph = deep_copy($graph)
 
-		# Merge/contract u and v in one single vertex. 
-		
+	while graph.length > 2
+		# Get random vertices u and v
+		u, v = random_vertices(graph)
+
+		# Send neighbors of v to u
+		graph[u].concat(graph[v])
+
+		# Change all the neighbors edges of v to u
+		graph[v].each { |neighbor| graph[neighbor].map! { |i| i == v ? u : i } }
+
+		# Remove self loops
+		graph[u] = graph[u].reject { |e| e == u }
+
+		# Delete v2
+		graph.delete(v)
+	end
+
+		# Take the first hash pair and return the size of the value.
+		# All elements in the array are neighboring vertices representing edges.
+		graph.shift[1].size
+end
+
+# Pick 2 random neighboring vertices from the graph
+def random_vertices(graph)
+	u = graph.keys.sample
+	v = graph[u].sample
+
+	[u, v]
+end
+
+# Necessary to make a copy of the graph for every karger_cut iteration.
+# Dup or clone will make a shallow copy and don't suffice.
+def deep_copy(original)
+	Marshal.load(Marshal.dump(original))
+end
+
+# Makes a hash representing the graph with vertex as key and corresponding edges
+# as values.
+def file_to_graph(file)
+	# Make a new graph
+	$graph = {}
+
+	File.open(file).each_line do |line|
+		arr = line.split(/\s+/).map(&:to_i)
+		$graph[arr[0]] = arr[1..-1]
 	end
 end
 
-# Read in the adjacency list and transform to array of arrays.
-def file_to_list(file)
-	File.readlines(file).map{ |line| line.split(/\s+/).map(&:to_i) }
-end
-
-if $PROGRAM_NAME == __FILE__
-	# Run the minimum_cut method
+if $PROGRAM_NAME == __FILE__	
+	file = ARGV.empty? ? "numbers3.txt" : ARGV[0]
+	file_to_graph(file)
+	puts minimum_cut
 end
