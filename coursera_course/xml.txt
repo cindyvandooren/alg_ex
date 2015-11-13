@@ -1,0 +1,13 @@
+
+&lt;	<	less than
+&gt;	>	greater than
+&amp;	&	ampersand 
+&apos;	'	apostrophe
+&quot;	"	quotation mark
+Only < and & are strictly illegal in XML, but it is a good habit to replace > with &gt; as well.
+XSLT to style and convert to HTML.
+<!-- To write comments -->
+
+Questions
+- What naming styles for XML does Tradeshift have?
+- Do you work with DTD or XML Schema (XSD)?
