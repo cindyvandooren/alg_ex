@@ -28,6 +28,8 @@ require 'io/console'
 # depends on your programming language and environment, and we strongly suggest that 
 # you exchange tips for doing this on the discussion forums.
 
+# I used all available test cases in the discussion forum and cannot seem to getting the correct answer. 
+
 def dfs1(graph, start_vertex)
 	stack = [start_vertex]
 	visited = []
