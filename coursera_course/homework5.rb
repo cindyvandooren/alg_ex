@@ -1,5 +1,6 @@
 require 'byebug'
 require 'io/console'
+require 'set'
 
 # Link to course: https://class.coursera.org/algo-009/quiz/attempt?quiz_id=96
 
@@ -37,161 +38,58 @@ require 'io/console'
 # you'll probably need to maintain some kind of mapping between vertices and their 
 # positions in the heap.
 
-# Step 1: Load the file
-# Step 2: Eliminate all the vertices that cannot be reached from 1.
-# Step 3: Find the shortest paths for the other vertices.
-
-# We need to find length of shortest path between 1 and these vertices.
-$goal_vertices = [7, 37, 59, 82, 99, 115, 133, 165, 188, 197]
-
-def find_shortest_paths(file)
-	# Step 1: Load the file into a graph.
+def find_shortest_path(file)
 	graph = file_to_graph(file)
+	distances = dijkstra(graph, 1)
 
-	# Step 2: Eliminate vertices that cannot be reached from vertex 1.
-	# Do a DFS/BFS for that first.
-	# Then remove unexplored vertices. 
+	goals = [7, 37, 59, 82, 99, 115, 133, 165, 188, 197]
 
-	# Should revise this. Maybe a lot of it is already happening in Dijkstra's algorithm.
-	explored_graph = bfs(graph, 1)
-	cleaned_graph = eliminate_unexplored_vertices(explored_graph)
-
-	distances = {}
-
-	dijkstra(cleaned_graph, 1)
-
-	# $goal_vertices.each do |vertex|
-	# 	# If the vertex is not in the graph, then add 1000 000 to distances.
-	# 	# Else add the length of the shortest path
-	# 	if !graph[vertex]
-	# 		distances[vertex] << 1000000
-	# 	else 
-	# 		distances[vertex] << dijkstra(graph, vertex)
-	# 	end
-	# end
-
-	# distances
-end
-
-def dijkstra(graph, source)
-	debugger
-	visited = {}
-	shortest_distances = {}
-
-	visited[source] = true
-	shortest_distances[source] = 0
-
-	curr_vertex = source
-
-	while visited.length < graph.length
-		# Mark curr_vertex as explored.
-		graph[curr_vertex][0] = true
-
-		min_weight = 1000000
-		smallest_edge = nil
-
-		# Find the edge of the current vertex with the smallest weight.
-		# It cannot be already explored.
-		graph[curr_vertex][1..-1].each do |v_and_w|
-			if !graph[v_and_w[0]] && (v_and_w[1] + shortest_distances[curr_vertex]) < min_weight
-				min_weight = v_and_w[1]
-				smallest_edge = v_and_w[0]
-			end
-		end
-
-		visited[smallest_edge] = true
-		shortest_distances[smallest_edge] = min_weight + shortest_distances[curr_vertex]
-		curr_vertex = smallest_edge		
-	end
-
-
-	shortest_distances
-end
-
-
-
-# $INFINITY = 1 << 32
-
-# def dijkstra(source, edges, weights, n)
-# 	visited = Array.new(n, false)
-# 	shortest_distances = Array.new(n, $INFINITY)
-# 	previous = Array.new(n, nil)
-# 	pq = PQueue.new(proc {|x,y| shortest_distances[x] < shortest_distances[y]})
-
-# 	pq.push(source)
-# 	visited[source] = true
-# 	shortest_distances[source] = 0
-
-# 	while pq.size != 0
-# 		v = pq.pop
-# 		visited[v] = true
-# 		if edges[v]
-# 			edges[v].each do |w|
-# 				if !visited[w] and shortest_distances[w] > shortest_distances[v] + weights[v][w]
-# 					shortest_distances[w] = shortest_distances[v] + weights[v][w]
-# 					previous[w] = v
-# 					pq.push(w)
-# 				end
-# 			end
-# 		end
-# 	end
-
-# 	return [shortest_distances, previous]
-# end
-
-def bfs(graph, source_vertex)
-	# Mark the source_vertex as explored.
-	graph[source_vertex][0] = true
-
-	queue = []
-
-	until queue.empty?
-		curr_vertex = queue.shift
-
-		goal_vertices = []
-
-		graph[source_vertex][2..-1].each do |v_and_w|
-			goal_vertices << v_and_w[0]
-		end
-
-		goal_vertices.each do |vertex|
-			if !graph[goal_vertex][0]
-				graph[goal_vertex][0] = true
-				queue << vertex
-			end
-		end
-	end
-
-	graph
-end
-
-def eliminate_unexplored_vertices(explored_graph)
-	explored_graph.keep_if do |key, value|
-		value[0] == false
-	end
+	results = goals.map{ |goal| distances[goal].to_s }.join(",")
 end
 
 def file_to_graph(file)
 	graph = {}
 
-	# We'll transform the adjacency matrix into a graph:
-	# graph = { row_number: [explored?, [vertex, weight], [vertex, weight], ... ]}
 	File.open(file).each_line do |line|
-		arr = line.split(/\s+/)
-		
-		row_number = arr[0].to_i
-		graph[row_number] = [false]
-
-		arr[1..-1].each do |string|
-			vertex, weight = string.split(",").map(&:to_i)
-			graph[row_number] << [vertex, weight]
-		end
+		row = line.split(/\s+/).map{ |el| el.split(",").map(&:to_i) }
+		inner_hash_keys = row[1..-1].map{ |el| el[0] }
+		inner_hash_values = row[1..-1].map{ |el| el[1] }
+		graph[row[0][0]] = Hash[inner_hash_keys.zip(inner_hash_values)]
 	end
 
 	graph
 end
 
+def dijkstra(graph, start)
+	distances = { start => 0 }
+	explored = [start].to_set
+	unexplored = graph.keys.to_set - explored
+
+	until unexplored.empty?
+		candidates = {}
+
+		unexplored.each do |row|
+			if graph[row].keys
+				graph[row].keys.each do |vertex|
+					if explored.include?(vertex)
+						l = distances[vertex] + graph[row][vertex]
+
+						candidates[row] = candidates[row].nil? ? l : [l, candidates[row]].min
+					end
+				end
+			end
+		end
+
+		x = candidates.min_by{ |k, v| v }[0]
+		distances[x] = candidates[x]
+		unexplored.delete(x)
+		explored << (x)
+	end
+
+	return distances
+end
+
 if $PROGRAM_NAME == __FILE__
 	file = ARGV.empty? ? "numbers5.txt" : ARGV[0]
-	p find_shortest_paths(file)
+	p find_shortest_path(file) == "2599,2610,2947,2052,2367,2399,2029,2442,2505,3068"
 end
