@@ -58,7 +58,7 @@ def sum_medians(file)
 		if low_heap.empty? || high_heap.empty?
 			current_median = num
 		elsif low_heap.size == high_heap.size
-			current_median = (low_heap.max + high_heap.min) / 2
+			current_median = low_heap.max
 		elsif low_heap.size > high_heap.size
 			current_median = low_heap.max
 		else

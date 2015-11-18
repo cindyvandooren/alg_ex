@@ -57,3 +57,5 @@ if $PROGRAM_NAME == __FILE__
 	file = ARGV.empty? ? "numbers6a.txt" : ARGV[0]
 	p two_sum(file)
 end
+
+# Answer is 427.

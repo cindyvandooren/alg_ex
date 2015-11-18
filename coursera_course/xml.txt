@@ -1,5 +1,0 @@
-Unlike HTML attributes, you must always assign a value to an XML attribute if you use that attribute—there are no standalone attributes as in HTML.
-XML differs from HTML, because in HTML you do not always need a closing tag. In XML you do. Also the casing of a tag is important in XML. It HTML it isn't.
-XML documents always need a root element, even if the root element does not have any content.
-
-XML-based Simple Object Access Protocol (SOAP).
