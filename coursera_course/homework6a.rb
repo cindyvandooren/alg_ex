@@ -42,7 +42,7 @@ def two_sum(file)
 		end
 	end
 
-	result
+	result.uniq.length
 end
 
 def file_to_hash(file)
